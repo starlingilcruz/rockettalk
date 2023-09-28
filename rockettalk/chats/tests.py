@@ -4,12 +4,13 @@ from django.contrib.auth import get_user_model
 from channels.testing import WebsocketCommunicator
 from channels.db import database_sync_to_async
 from channels.routing import URLRouter
+# import redis
 
 from .consumers import ChatConsumer
 
 
 class ChatConsumerTest(TestCase):
-    
+
     async def connect(self):
         _path = "/testws/testroom/"
         application = URLRouter([
@@ -19,7 +20,7 @@ class ChatConsumerTest(TestCase):
         connected, _ = await communicator.connect()
         assert connected
         return communicator
-    
+
     async def disconnect(self, communicator):
         await communicator.disconnect()
 
@@ -48,10 +49,10 @@ class ChatConsumerTest(TestCase):
 
         await self.disconnect(communicator)
 
-        self.assertEqual(response, { "type": "message", **payload })
+        self.assertEqual(response, {"type": "message", **payload})
 
     async def test_receive_invalid_message(self):
         pass
 
-
-       
+    async def test_save_message_in_redis(self):
+        pass

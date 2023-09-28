@@ -1,4 +1,3 @@
-denv
 
 # Django #
 *.log
@@ -10,3 +9,7 @@ media
 
 # Visual Studio Code # 
 .vscode/* 
+
+# misc
+denv
+.env

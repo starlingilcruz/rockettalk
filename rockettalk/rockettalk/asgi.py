@@ -19,15 +19,15 @@ from chats import routing
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rockettalk.settings')
 # Importing Django ASGI application early to avoid issues importing dependent code
 django_asgi_app = get_asgi_application()
- 
+
 application = ProtocolTypeRouter(
     {
-        "http" : django_asgi_app,
-        "websocket" : AllowedHostsOriginValidator(
+        "http": django_asgi_app,
+        "websocket": AllowedHostsOriginValidator(
             AuthMiddlewareStack(
                 URLRouter(
                     routing.websocket_urlpatterns
-                )   
+                )
             )
         )
     }
