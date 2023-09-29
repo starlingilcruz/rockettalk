@@ -1,8 +1,9 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+import logging
 
 from .forms import ChatMessageForm
 
-# TODO log properly
+logger = logging.getLogger(__name__)
 
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
@@ -23,8 +24,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             )
 
             await self.accept()
+            logger.info("WebSocket connection established")
+
         except Exception as e:
-            print(f"Error during websocket connection: {e}")
+            logger.error(f"Error during websocket connection: {e}")
 
     async def disconnect(self, close_code):
         try:
@@ -32,8 +35,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 self.group_name,
                 self.channel_name
             )
+            logger.info("WebSocket connection closed")
+
         except Exception as e:
-            print(f"Error during websocket disconnection: {e}")
+            logger.error(f"Error during websocket disconnection: {e}")
 
     async def receive_json(self, content=None):
         try:
@@ -44,16 +49,19 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                     "message": content["message"],
                     "username": content["username"],
                 })
+            logger.debug(f"Received message: {content}")
+
         except KeyError as e:
-            print(f"KeyError in received data: {e}")
+            logger.error(f"KeyError in received data: {e}")
         except Exception as e:
-            print(f"Unexpected error in received method: {e}")
+            logger.error(f"Unexpected error in received method: {e}")
 
     async def send_message(self, event, reason="message"):
         try:
             form = ChatMessageForm(event)
             form.is_valid()  # TODO handle invalid form
 
+            logger.debug(f"Send message: {event}")
             await self.send_json(
                 content={
                     "type": reason,
@@ -61,8 +69,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                     "username": form.cleaned_data['username']
                 }
             )
+
         except Exception as e:
-            print(f"Error sending message: {e}")
+            logger.error(f"Error sending message: {e}")
 
     async def save_message(self, room_id, message):
         return True
