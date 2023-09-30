@@ -1,7 +1,10 @@
-const ws = new WebSocket("ws://" + window.location.host + "/ws/testRoom/");
+const defaultChannel = "coolrom"
 
-setup();
+const ws = new WebSocket(`ws://${window.location.host}/ws/${defaultChannel}/`);
+
+setupElements();
 setupWebsocket();
+loadMessages()
 
 function setupWebsocket() {
   ws.onopen = function (e) {
@@ -18,7 +21,7 @@ function setupWebsocket() {
   };
 }
 
-function setup() {
+function setupElements() {
   document.querySelector("#message_input").focus();
   document.querySelector("#message_input").onkeyup = function (e) {
     if (e.keyCode == 13) {
@@ -41,6 +44,24 @@ function createMessageEle(message) {
   container.innerHTML = message;
   document.querySelector("#message_input").value = "";
   document.querySelector("#chat_box_container").appendChild(container);
+}
+
+function loadMessages() {
+  const url = `http://${window.location.host}/api/messages/${defaultChannel}`;
+
+  fetch(url, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json'}
+  })
+  .then((res)=> res.json())
+  .then(({ messages }) => {
+    if (!messages?.length) return;
+
+    messages.forEach(msg => {
+      createMessageEle(`${msg["username"]}: ${msg["message"]}`)
+    });
+
+  });
 }
 
 
