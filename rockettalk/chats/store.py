@@ -36,7 +36,7 @@ class RedisStore:
             logger.info('Storing %s in cache', str((hashname, obj)))
             return self.redis.hset(hashname, uuid(128), json.dumps(obj))
         except Exception as ex:
-            logger.Error(f"Unable to store object in cache: {ex}")
+            logger.error(f"Unable to store object in cache: {ex}")
 
     def retrieve_objects(self, hashname) -> list:
         try:
@@ -45,5 +45,5 @@ class RedisStore:
                 json.loads(v) for v in self.redis.hgetall(hashname).values()
             ]
         except Exception as ex:
-            logger.Error(f"Unable to retrieve objects from cache: {ex}")
+            logger.error(f"Unable to retrieve objects from cache: {ex}")
         return []
