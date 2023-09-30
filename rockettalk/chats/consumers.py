@@ -2,11 +2,13 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 import logging
 
 from .forms import ChatMessageForm
+from .store import StoreConnector
+from .utils import channel_fmt
 
 logger = logging.getLogger(__name__)
 
 
-class ChatConsumer(AsyncJsonWebsocketConsumer):
+class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
 
     async def connect(self):
         try:
@@ -14,9 +16,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
             if not self.group_id:
                 # default room which every member is commom
-                self.group_id = 'global-room'
+                self.group_id = channel_fmt('global-room')
 
-            self.group_name = f'chat_{self.group_id}'
+            self.group_name = channel_fmt(self.group_id)
 
             await self.channel_layer.group_add(
                 self.group_name,
@@ -61,20 +63,25 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             form = ChatMessageForm(event)
             form.is_valid()  # TODO handle invalid form
 
-            logger.debug(f"Send message: {event}")
-            await self.send_json(
-                content={
-                    "type": reason,
-                    "message": form.cleaned_data['message'],
-                    "username": form.cleaned_data['username']
-                }
-            )
+            content = {
+                "type": reason,
+                "message": form.cleaned_data['message'],
+                "username": form.cleaned_data['username']
+            }
+            await self.send_json(content=content)
+
+            logger.debug(f"Message sent: {event}")
+
+            if self.store:
+                await self.save_message(self.group_name, content)
 
         except Exception as e:
             logger.error(f"Error sending message: {e}")
 
-    async def save_message(self, room_id, message):
-        return True
-
-    async def retrieve_messages(self, room_id):
-        return []
+    async def save_message(self, channel_name, content):
+        if not self.store:
+            raise Exception("Error: no store provided")
+        
+        return self.store.store_object(
+            hashname=channel_name, obj=content
+        )
