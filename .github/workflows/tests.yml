@@ -42,7 +42,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Run applicatio with docker
-      run: docker-compose up
+      run: docker-compose build
     # - name: Install Dependencies
     #   run: |
     #     cd rockettalk
