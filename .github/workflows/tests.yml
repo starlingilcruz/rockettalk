@@ -12,6 +12,7 @@ jobs:
 
     services:
       # Label used to access the service container
+      run: sudo chown -R $USER:$USER ./
       postgres:
         # Docker Hub image
         image: postgres
@@ -37,11 +38,6 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-
-    - name: Provide permissions
-      # run: sudo chown -R $USER:$USER /home/runner/work/rockettalk/rockettalk/bin/db
-      run: sudo chown -R $USER:$USER ./
-      # run: chmod -R 777 ./
     - name: Install Dependencies
       run: |
         cd rockettalk
