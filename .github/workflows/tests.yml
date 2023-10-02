@@ -45,6 +45,8 @@ jobs:
       run: docker-compose build
     - name: Run Container
       run: docker-compose up
+    - name: Stop Container
+      run: docker-compose down
     # - name: Install Dependencies
     #   run: |
     #     cd rockettalk
