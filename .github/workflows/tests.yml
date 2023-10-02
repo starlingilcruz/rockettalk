@@ -10,9 +10,11 @@ jobs:
       matrix:
         python-version: [3.9]
 
+    defaults:
+      run: sudo chown -R $USER:$USER ./
+
     services:
       # Label used to access the service container
-      run: sudo chown -R $USER:$USER ./
       postgres:
         # Docker Hub image
         image: postgres
