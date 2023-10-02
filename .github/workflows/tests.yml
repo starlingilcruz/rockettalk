@@ -39,7 +39,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Provide permissions
-      run: sudo chown -R $USER:$USER /home/runner/work/rockettalk/rockettalk/bin/db
+      # run: sudo chown -R $USER:$USER /home/runner/work/rockettalk/rockettalk/bin/db
+      run: chmod -R 777 /home/runner/work/rockettalk/rockettalk/bin/db
     - name: Install Dependencies
       run: |
         cd rockettalk
