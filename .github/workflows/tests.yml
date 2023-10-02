@@ -40,7 +40,7 @@ jobs:
 
     - name: Provide permissions
       # run: sudo chown -R $USER:$USER /home/runner/work/rockettalk/rockettalk/bin/db
-      run: chmod -R 777 /home/runner/work/rockettalk/rockettalk/bin/db
+      run: chmod -R 777 ./bin/db
     - name: Install Dependencies
       run: |
         cd rockettalk
