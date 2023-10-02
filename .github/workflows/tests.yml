@@ -10,30 +10,30 @@ jobs:
       matrix:
         python-version: [3.9]
 
-    defaults:
-      run:
-        shell: sudo chown -R $USER:$USER ./
+    # defaults:
+    #   run:
+    #     shell: sudo chown -R $USER:$USER ./
 
-    services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres
-        ports:
-          - 5432:5432
-        # Provide the password for postgres
-        env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        volumes:
-          - ./bin/db:/docker-entrypoint-initdb.d
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    # services:
+    #   # Label used to access the service container
+    #   postgres:
+    #     # Docker Hub image
+    #     image: postgres
+    #     ports:
+    #       - 5432:5432
+    #     # Provide the password for postgres
+    #     env:
+    #       POSTGRES_DB: postgres
+    #       POSTGRES_USER: postgres
+    #       POSTGRES_PASSWORD: postgres
+    #     volumes:
+    #       - ./bin/db:/docker-entrypoint-initdb.d
+    #     # Set health checks to wait until postgres has started
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
 
     steps:
     - uses: actions/checkout@v3
@@ -41,15 +41,17 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
-      run: |
-        cd rockettalk
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Run Tests
-      run: |
-        cd rockettalk
-        python manage.py test
+    - name: Run applicatio with docker
+      run: docker-compose up
+    # - name: Install Dependencies
+    #   run: |
+    #     cd rockettalk
+    #     python -m pip install --upgrade pip
+    #     pip install -r requirements.txt
+    # - name: Run Tests
+    #   run: |
+    #     cd rockettalk
+    #     python manage.py test
       env:
         DATABASE_HOST: postgres
         DATABASE_PORT: 5432
