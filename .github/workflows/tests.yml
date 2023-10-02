@@ -43,7 +43,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Build Container
       run: docker-compose build
-    - name: Run Container:
+    - name: Run Container
       run: docker-compose up
     # - name: Install Dependencies
     #   run: |
