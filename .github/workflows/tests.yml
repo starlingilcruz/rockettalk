@@ -23,7 +23,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         volumes:
-          [./bin/db:/docker-entrypoint-initdb.d]
+          - ./bin/db:/docker-entrypoint-initdb.d
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
