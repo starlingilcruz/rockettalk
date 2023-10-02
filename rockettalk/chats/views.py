@@ -9,7 +9,13 @@ from .utils import channel_fmt
 
 @login_required
 def chat_view(request, *args, **kwargs):
-    return render(request, settings.CHAT_TEMPLATE, {})
+    channel = kwargs.get("channel", None)
+    messages = None
+    if channel:
+        store = RedisStore()
+        messages = store.retrieve_objects(hashname=channel_fmt(channel))
+        
+    return render(request, settings.CHAT_TEMPLATE, {"messages": messages or []})
 
 
 @require_GET
