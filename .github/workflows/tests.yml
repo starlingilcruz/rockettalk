@@ -55,6 +55,8 @@ jobs:
     #     cd rockettalk
     #     python manage.py test
       env:
+        REDIS_HOST: redis
+        REDIS_PORT: 6379
         DATABASE_HOST: postgres
         DATABASE_PORT: 5432
         DATABASE_NAME: postgres
