@@ -32,6 +32,8 @@ DEBUG = os.environ.get("DEBUG", False)
 # ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.0:8000"]
 ALLOWED_HOSTS = ["*"]
 
+CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", None)]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "channels",
+   #  "corsheaders",
     "apps.chats",
 ]
 
@@ -55,6 +58,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "corsheaders.middleware.CorsMiddleware",
+
 ]
 
 ROOT_URLCONF = "rockettalk.urls"
