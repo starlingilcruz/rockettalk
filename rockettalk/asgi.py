@@ -14,7 +14,7 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 
-from chats import routing
+from apps.chats import routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rockettalk.settings')
 # Importing Django ASGI application early to avoid issues importing dependent code
