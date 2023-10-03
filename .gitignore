@@ -13,3 +13,4 @@ media
 # misc
 denv
 .env
+.DS_Store
