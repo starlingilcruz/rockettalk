@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 import os
 
 load_dotenv()
@@ -29,8 +30,7 @@ SECRET_KEY = "django-insecure-4p%4wf%qg+6rqxf)c)wt$d4ku&_%zw=v^!fzsy8q*55pfa=y3m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", False)
 
-# ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.0:8000"]
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.0", "localhost"]
 
 CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", None)]
 
@@ -113,10 +113,17 @@ DATABASES = {
         "HOST": os.environ.get("DATABASE_HOST"),
         "PORT": os.environ.get("DATABASE_PORT"),
         "OPTIONS": {
-            "sslmode": 'required' if os.environ.get("DATABASE_URL") else ''
-        },
+            "ssl_mode": os.environ.get("DATABASE_SSL_MODE", False)
+        }
     }
 }
+
+DATABASE_URL = os.environ.get("DATABASE_URL", None)
+
+if DATABASE_URL:
+    # Overrides default database
+    DATABASES['default'] = dj_database_url.parse(
+        DATABASE_URL, conn_max_age=600, ssl_require=True)
 
 LOGGING = {
     'version': 1,
