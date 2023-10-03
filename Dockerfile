@@ -9,5 +9,6 @@ RUN mkdir /app
 WORKDIR /app
 
 ADD ./rockettalk /app/
+ADD .requirements /app/
 
 RUN pip install -r requirements.txt
