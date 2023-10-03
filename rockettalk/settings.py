@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "channels",
-   #  "corsheaders",
+    #  "corsheaders",
     "apps.chats",
 ]
 
@@ -106,13 +106,16 @@ LOGOUT_REDIRECT_URL = "login-user"
 
 DATABASES = {
     "default": {
-       "ENGINE": 'django.db.backends.postgresql',
-       "NAME": os.environ.get("DATABASE_NAME"),
-       "USER": os.environ.get("DATABASE_USER"),
-       "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
-       "HOST": os.environ.get("DATABASE_HOST"),
-       "PORT": os.environ.get("DATABASE_PORT"),
-   }
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": os.environ.get("DATABASE_NAME"),
+        "USER": os.environ.get("DATABASE_USER"),
+        "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
+        "HOST": os.environ.get("DATABASE_HOST"),
+        "PORT": os.environ.get("DATABASE_PORT"),
+        "OPTIONS": {
+            "ssl": True if os.environ("DATABASE_URL") else False
+        },
+    }
 }
 
 LOGGING = {
