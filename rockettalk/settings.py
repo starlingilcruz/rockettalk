@@ -29,7 +29,10 @@ SECRET_KEY = "django-insecure-4p%4wf%qg+6rqxf)c)wt$d4ku&_%zw=v^!fzsy8q*55pfa=y3m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", False)
 
+# ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.0:8000"]
 ALLOWED_HOSTS = ["*"]
+
+CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", None)]
 
 # Application definition
 
@@ -43,7 +46,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "channels",
-    "chats",
+    #  "corsheaders",
+    "apps.chats",
 ]
 
 MIDDLEWARE = [
@@ -54,6 +58,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "corsheaders.middleware.CorsMiddleware",
+
 ]
 
 ROOT_URLCONF = "rockettalk.urls"
@@ -100,11 +106,75 @@ LOGOUT_REDIRECT_URL = "login-user"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": os.environ.get("DATABASE_NAME"),
+        "USER": os.environ.get("DATABASE_USER"),
+        "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
+        "HOST": os.environ.get("DATABASE_HOST"),
+        "PORT": os.environ.get("DATABASE_PORT"),
+        "OPTIONS": {
+            "sslmode": 'required' if os.environ.get("DATABASE_URL") else ''
+        },
     }
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'standard': {
+            'format': "[ %(asctime)s ][ %(levelname)s ][ %(message)s ]",
+            'datefmt': "%Y-%m-%d %H:%M:%S",
+        },
+        'debug': {
+            'format':
+                '\n %(levelname)s (%(asctime)s) %(pathname)s:%(lineno)d: %(message)s ',
+            'datefmt': "%Y-%m-%d %H:%M:%S",
+        },
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message}',
+            'style': '{',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        },
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

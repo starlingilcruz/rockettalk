@@ -1,6 +1,8 @@
-const ws = new WebSocket("ws://" + window.location.host + "/ws/testRoom/");
+const defaultChannel = "coolrom"
 
-setup();
+const ws = new WebSocket(`ws://${window.location.host}/ws/${defaultChannel}/`);
+
+setupElements();
 setupWebsocket();
 
 function setupWebsocket() {
@@ -18,7 +20,7 @@ function setupWebsocket() {
   };
 }
 
-function setup() {
+function setupElements() {
   document.querySelector("#message_input").focus();
   document.querySelector("#message_input").onkeyup = function (e) {
     if (e.keyCode == 13) {

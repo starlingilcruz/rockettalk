@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <center><h1>Welcome <span id="logged-in-user">{{ request.user }}<span>!</h1></center>
+    <center><h1>Welcome <span id="logged-in-user">{{ request.user }}</span>!</h1></center>
 
     {% if request.user.is_authenticated  %}
       <center> Click to <a href = "{% url 'logout-user' %}">Logout</a></center>
@@ -11,6 +11,10 @@
     <div id="chat_box_container" style="font-size: 14px">
       <input type="text" id="message_input" />
       <button type="submit" id="send_button">Send Message</button>
+
+      {% for m in messages %}
+        <div> {{ m.username }} : {{ m.message }}</div>
+      {% endfor %}
     </div>
 
     <script src="{% static 'js/chats.js' %}"></script>
