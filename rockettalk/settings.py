@@ -113,7 +113,7 @@ DATABASES = {
         "HOST": os.environ.get("DATABASE_HOST"),
         "PORT": os.environ.get("DATABASE_PORT"),
         "OPTIONS": {
-            "ssl": True if os.environ("DATABASE_URL") else False
+            "ssl": True if os.environ.get("DATABASE_URL") else False
         },
     }
 }
