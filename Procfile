@@ -1,1 +1,1 @@
-web: daphne rockettalk.asgi:application
+web: daphne rockettalk.asgi:application --port $PORT --bind 0.0.0.0 -v2
