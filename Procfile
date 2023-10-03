@@ -1,1 +1,1 @@
-web: cd rockettalk & daphne rockettalk.asgi:application
+web: daphne rockettalk.asgi:application
