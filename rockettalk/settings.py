@@ -34,6 +34,14 @@ ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.0", "localhost"]
 
 CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", None)]
 
+if not DEBUG:
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_SSL_REDIRECT = True
+    WEBSOCKET_PROTOCOL = 'wss'
+else:
+    WEBSOCKET_PROTOCOL = 'ws'
+
 # Application definition
 
 INSTALLED_APPS = [
