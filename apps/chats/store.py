@@ -26,7 +26,7 @@ class StoreConnector:
 class RedisStore:
 
     def __init__(self) -> None:
-        self.redis = caches['default'].client.get_client()
+        self.redis = caches['redis'].client.get_client()
 
     def store_object(self, hashname, obj):
         try:

@@ -86,19 +86,26 @@ ASGI_APPLICATION = "rockettalk.asgi.application"
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ.get('REDIS_CACHE_URL', None),
+        "LOCATION": os.environ.get('REDIS_URL', None),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
 }
 
-# CACHES["redis"] = CACHES["default"]
+CACHES["redis"] = CACHES["default"]
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": os.environ.get('REDIS_CHANNEL_URL', None),
+        "CONFIG": {
+            "hosts": [
+                os.environ.get('REDIS_CHANNEL_URL',
+                               os.environ.get(
+                                   "HEROKU_REDIS_BLUE_URL", "localhost")
+                               )
+            ]
+        }
     }
 }
 
