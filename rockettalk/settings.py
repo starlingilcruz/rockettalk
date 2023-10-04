@@ -83,23 +83,24 @@ TEMPLATES = [
 WSGI_APPLICATION = "rockettalk.wsgi.application"
 ASGI_APPLICATION = "rockettalk.asgi.application"
 
-CHANNEL_LAYERS = {
+CACHES = {
     "default": {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [(
-                os.environ.get("REDIS_HOST"),
-                os.environ.get("REDIS_PORT")
-            )],
-        },
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.environ.get('REDIS_CACHE_URL', None),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
-LOGIN_URL = "login-user"
+# CACHES["redis"] = CACHES["default"]
 
-LOGIN_REDIRECT_URL = "chat-page"
-
-LOGOUT_REDIRECT_URL = "login-user"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "LOCATION": os.environ.get('REDIS_CHANNEL_URL', None),
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -195,6 +196,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },
 ]
 
+LOGIN_URL = "login-user"
+
+LOGIN_REDIRECT_URL = "chat-page"
+
+LOGOUT_REDIRECT_URL = "login-user"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
