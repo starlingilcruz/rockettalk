@@ -26,10 +26,6 @@ services:
     build: .
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     container_name: rockettalk
-    restart: always
-    depends_on:
-      - postgres
-      - redis
     volumes:
       - ./:/app
     ports:
