@@ -128,7 +128,7 @@ DATABASES = {
         "ENGINE": 'django.db.backends.postgresql',
         "NAME": os.environ.get("DATABASE_NAME"),
         "USER": os.environ.get("DATABASE_USER"),
-        "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
+        "PASSWORD": os.environ.get("DATABASE_PASS"),
         "HOST": os.environ.get("DATABASE_HOST"),
         "PORT": os.environ.get("DATABASE_PORT"),
         # "OPTIONS": {
@@ -249,8 +249,6 @@ STATIC_ROOT = "static/"
 STATICFILE_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 mimetypes.add_type("text/css", ".css", True)
 
