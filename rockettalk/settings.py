@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 import os
+import mimetypes
 
 load_dotenv()
 
@@ -248,6 +249,8 @@ STATIC_ROOT = "static/"
 STATICFILE_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+mimetypes.add_type("text/css", ".css", True)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
