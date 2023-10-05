@@ -19,8 +19,8 @@ jobs:
           - 5432:5432
         # Provide the password for postgres
         env:
-         #  POSTGRES_DB: postgres
-         # POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         # volumes:
         #  - ./bin/db:/docker-entrypoint-initdb.d
@@ -60,4 +60,4 @@ jobs:
         DATABASE_PASS: postgres
         DATABASE_HOST: postgres
         DATABASE_PORT: 5432
-        REDIS_LOCATION: redis://redis:6379/?db=0
+        REDIS_URL: redis://redis:6379/?db=0
