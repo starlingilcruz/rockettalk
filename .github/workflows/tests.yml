@@ -10,10 +10,6 @@ jobs:
       matrix:
         python-version: [3.9]
 
-    # defaults:
-    #   run:
-    #     shell: sudo chown -R $USER:$USER ./
-
     services:
       # Label used to access the service container
       postgres:
@@ -43,7 +39,6 @@ jobs:
           --health-retries 5
         ports:
           - 6379:6379
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -66,27 +61,3 @@ jobs:
         DATABASE_HOST: postgres
         DATABASE_PORT: 5432
         REDIS_LOCATION: redis://redis:6379/?db=0
-        REDIS_PASSWORD:
-    # - name: Build Container
-    #   run: docker-compose build
-    # - name: Run Container
-    #   run: docker-compose up
-    # - name: Stop Container
-    #   run: docker-compose down
-    # - name: Install Dependencies
-    #   run: |
-    #     cd rockettalk
-    #     python -m pip install --upgrade pip
-    #     pip install -r requirements.txt
-    # - name: Run Tests
-    #   run: |
-    #     cd rockettalk
-    #     python manage.py test
-      # env:
-      #   REDIS_HOST: redis
-      #   REDIS_PORT: 6379
-      #   DATABASE_HOST: postgres
-        # DATABASE_PORT: 5432
-        # DATABASE_NAME: postgres
-        # DATABASE_USER: postgres
-        # DATABASE_PASSWORD: postgres
