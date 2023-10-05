@@ -1,12 +1,20 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"/>
+  </head>
   <body>
-    <form method ="post">
-      {% csrf_token %}
-      {{form.as_p}}
-      <br>
-      <button type = "submit">Login</button>
-    </form>
+    <h1>Rocket Talk</h1>
+    <div class="login-container">
+      <div class="header">
+        <span> SIGN IN </span>
+      </div>
+      <form method ="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">Login</button>
+      </form>
+    </div>
   </body>
 </html>

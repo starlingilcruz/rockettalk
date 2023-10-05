@@ -1,22 +1,43 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-  <body>
-    <center><h1>Welcome <span id="logged-in-user">{{ request.user }}</span>!</h1></center>
+  
+  <head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/chats.css' %}" />
+  </head>
 
-    {% if request.user.is_authenticated  %}
-      <center> Click to <a href = "{% url 'logout-user' %}">Logout</a></center>
+  <body>
+    <center>
+      <h1>Welcome <span id="logged-in-user">{{ request.user }}</span>!</h1>
+    </center>
+
+    {% if request.user.is_authenticated %}
+    <center> Click to <a href="{% url 'logout-user' %}">Logout</a></center>
     {% endif %}
 
-    <div id="chat_box_container" style="font-size: 14px">
-      <input type="text" id="message_input" />
-      <button type="submit" id="send_button">Send Message</button>
 
-      {% for m in messages %}
-        <div> {{ m.username }} : {{ m.message }}</div>
-      {% endfor %}
+    <div id="chat_box_container">
+      
+      <div class="message-container">
+        {% for m in messages %}
+        <div class="m-row {% if m.username == request.user.username %} place-right {% endif %}">
+          <div class="msg-container">
+            <span class="header">[ {{ m.username }} ]</span>
+            <div class="msg-body">
+              <span>{{ m.message }}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="chat-panel">
+        <input type="text" id="message_input" />
+        <button type="submit" id="send_button">Send Message</button>
+      </div>
     </div>
 
     <script src="{% static 'js/chats.js' %}"></script>
   </body>
+
 </html>

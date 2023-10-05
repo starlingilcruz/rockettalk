@@ -22,6 +22,13 @@ services:
       - "6379:6379"
     networks:
       - rockettalk
+  redisb:
+    image: redis
+    container_name: redis-serverb
+    ports:
+      - "6380:6379"
+    networks:
+      - rockettalk
   rocket:
     build: .
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
