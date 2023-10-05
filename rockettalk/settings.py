@@ -250,6 +250,8 @@ STATICFILE_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 mimetypes.add_type("text/css", ".css", True)
 
 # Default primary key field type
