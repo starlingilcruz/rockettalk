@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from sys import argv
 import dj_database_url
 import os
 import mimetypes
+
 
 load_dotenv()
 
@@ -35,7 +37,9 @@ ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.0", "localhost"]
 
 CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", None)]
 
-if os.environ.get("TESTING_MODE", False):
+TESTING = len(argv) > 1 and argv[1] == 'test'
+    
+if TESTING:
     CSRF_USE_SESSIONS = False
 
 if not DEBUG:
