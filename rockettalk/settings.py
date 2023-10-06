@@ -35,6 +35,9 @@ ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.0", "localhost"]
 
 CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", None)]
 
+if os.environ.get("TESTING_MODE", False):
+    CSRF_USE_SESSIONS = False
+
 if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True

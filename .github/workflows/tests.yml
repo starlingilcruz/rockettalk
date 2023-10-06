@@ -53,7 +53,7 @@ jobs:
       run: |
         python manage.py test apps.chats.tests
       env:
-        POSTGRES_PASSWORD: postgres
+        TESTING_MODE: true
         DATABASE_NAME: postgres
         DATABASE_USER: postgres
         DATABASE_PASS: postgres
