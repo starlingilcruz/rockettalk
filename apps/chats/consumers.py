@@ -4,8 +4,19 @@ import logging
 from .forms import ChatMessageForm
 from .store import StoreConnector
 from .utils import channel_fmt
+from .exceptions import InvalidFormException
 
 logger = logging.getLogger(__name__)
+
+# class ConsumerFactory():
+
+#     @classmethod
+#     def use_form_validator(self, form):
+#         """Set a validator function that will validate incoming forms before they are stored in Redis or sent out as JSON."""
+#         return
+
+#     def __new__(cls, *args, **kwargs) -> Self:
+#         return super().__new__(cls, *args, **kwargs)
 
 
 class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
@@ -44,12 +55,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
 
     async def receive_json(self, content=None):
         try:
+            print(content)
             # Broadcast message to a room group
             await self.channel_layer.group_send(
                 self.group_name, {
+                    **content,
                     "type": "send_message",
-                    "message": content["message"],
-                    "username": content["username"],
                 })
             logger.debug(f"Received message: {content}")
 
@@ -61,12 +72,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
     async def send_message(self, event, reason="message"):
         try:
             form = ChatMessageForm(event)
-            form.is_valid()  # TODO handle invalid form
+            if not form.is_valid():
+                raise InvalidFormException()
 
             content = {
+                **form.cleaned_data,
                 "type": reason,
-                "message": form.cleaned_data['message'],
-                "username": form.cleaned_data['username']
             }
             await self.send_json(content=content)
 
@@ -81,7 +92,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
     async def save_message(self, channel_name, content):
         if not self.store:
             raise Exception("Error: no store provided")
-        
+
         return self.store.store_object(
             hashname=channel_name, obj=content
         )
+
+# def make_chat_class(name, attributes):
+#     return type(name, ( ), attributes)
+
+# ChatConsumer = make_chat_class("ChatConsumer", { "form": ChatMessageForm })

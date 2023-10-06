@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.urls import path
 from django.contrib.auth import get_user_model
 from channels.testing import WebsocketCommunicator
@@ -7,9 +7,9 @@ from channels.routing import URLRouter
 # import redis
 
 from .consumers import ChatConsumer
+from .exceptions import InvalidFormException
 
-
-class ChatConsumerTest(TestCase):
+class ChatConsumerTest(TransactionTestCase):
 
     async def connect(self):
         _path = "/testws/testroom/"
@@ -51,8 +51,26 @@ class ChatConsumerTest(TestCase):
 
         self.assertEqual(response, {"type": "message", **payload})
 
-    async def test_receive_invalid_message(self):
-        pass
+    async def test_should_raise_form_invalid_exception(self):
+        user = await self.create_user("awesome_user", "testpwd")
+
+        payload = {
+            "message": "super cool test!!",
+            "username": user.username
+        }
+
+        communicator = await self.connect()
+
+        await communicator.send_json_to({
+            "type": "websocket.connect",
+            **payload
+        })
+
+        
+        with self.assertRaises(InvalidFormException):
+            result = await communicator.receive_json_from()
+            await self.disconnect(communicator)
+
 
     async def test_save_message_in_redis(self):
         pass

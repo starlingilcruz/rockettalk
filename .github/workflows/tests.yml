@@ -56,6 +56,8 @@ jobs:
         DATABASE_NAME: postgres
         DATABASE_USER: postgres
         DATABASE_PASS: postgres
-        DATABASE_HOST: localhost
+        DATABASE_HOST: localhost # since running outside container
         DATABASE_PORT: 5432
         REDIS_URL: redis://redis:6379/?db=0
+        CSRF_TRUSTED_ORIGINS: https://github.com/
+
