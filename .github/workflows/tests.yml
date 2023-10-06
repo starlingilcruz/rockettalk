@@ -11,13 +11,10 @@ jobs:
         python-version: [3.9]
 
     services:
-      # Label used to access the service container
       postgres:
-        # Docker Hub image
         image: postgres
         ports:
           - 5432:5432
-        # Provide the password for postgres
         env:
           # POSTGRES_DB: postgres
           # POSTGRES_USER: postgres
@@ -30,6 +27,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+          
       redis:
         image: redis
         options: >-
@@ -55,6 +53,7 @@ jobs:
       run: |
         python manage.py test apps.chats.tests
       env:
+        POSTGRES_PASSWORD: postgres
         DATABASE_NAME: postgres
         DATABASE_USER: postgres
         DATABASE_PASS: postgres
