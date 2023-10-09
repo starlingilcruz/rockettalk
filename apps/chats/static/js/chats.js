@@ -1,6 +1,6 @@
 const defaultChannel = "coolrom"
 
-const protocol = window.location.protocol == "http" ? "ws" : "wss";
+const protocol = window.location.protocol == "http:" ? "ws" : "wss";
 const ws = new WebSocket(`${protocol}://${window.location.host}/ws/${defaultChannel}/`);
 
 setupElements();

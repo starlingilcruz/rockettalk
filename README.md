@@ -1,4 +1,4 @@
-# rockettalk
+# Rockettalk
 
 ## Real-time chat application
 
