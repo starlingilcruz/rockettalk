@@ -55,7 +55,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
 
     async def receive_json(self, content=None):
         try:
-            print(content)
             # Broadcast message to a room group
             await self.channel_layer.group_send(
                 self.group_name, {
@@ -71,16 +70,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
 
     async def send_message(self, event, reason="message"):
         try:
-            form = ChatMessageForm(event)
-            if not form.is_valid():
-                raise InvalidFormException()
-
+            form = self.clean_and_validate_input(event)
             content = {
                 **form.cleaned_data,
                 "type": reason,
             }
             await self.send_json(content=content)
-
             logger.debug(f"Message sent: {event}")
 
             if self.store:
@@ -88,6 +83,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
 
         except Exception as e:
             logger.error(f"Error sending message: {e}")
+
+    def clean_and_validate_input(self, data):
+        form = ChatMessageForm(data)
+        if not form.is_valid():
+            raise InvalidFormException()
+        return form
 
     async def save_message(self, channel_name, content):
         if not self.store:
