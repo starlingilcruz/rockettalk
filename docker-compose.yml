@@ -37,6 +37,17 @@ services:
       - ./:/app
     ports:
       - "8000:8000"
+    environment:
+      - DEBUG="True"
+      - SECRET_KEY=django-insecure-4p%4wf%qg+6rqxf)c)wt$d4ku&_%zw=v^!fzsy8q*55pfa=y3m
+      - CSRF_TRUSTED_ORIGINS=http://localhost
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASS=postgres
+      - REDIS_URL=redis://redis:6379/0
+      - REDIS_CHANNEL_URL=redis://redisb:6379/0
     networks:
       - rockettalk
 
