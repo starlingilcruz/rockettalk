@@ -8,17 +8,6 @@ from .exceptions import InvalidFormException
 
 logger = logging.getLogger(__name__)
 
-# class ConsumerFactory():
-
-#     @classmethod
-#     def use_form_validator(self, form):
-#         """Set a validator function that will validate incoming forms before they are stored in Redis or sent out as JSON."""
-#         return
-
-#     def __new__(cls, *args, **kwargs) -> Self:
-#         return super().__new__(cls, *args, **kwargs)
-
-
 class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
 
     async def connect(self):
@@ -97,8 +86,3 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
         return self.store.store_object(
             hashname=channel_name, obj=content
         )
-
-# def make_chat_class(name, attributes):
-#     return type(name, ( ), attributes)
-
-# ChatConsumer = make_chat_class("ChatConsumer", { "form": ChatMessageForm })
