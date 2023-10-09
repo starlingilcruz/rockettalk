@@ -4,9 +4,9 @@ import logging
 from .forms import ChatMessageForm
 from .store import StoreConnector
 from .utils import channel_fmt
+from .exceptions import InvalidFormException
 
 logger = logging.getLogger(__name__)
-
 
 class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
 
@@ -47,9 +47,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
             # Broadcast message to a room group
             await self.channel_layer.group_send(
                 self.group_name, {
+                    **content,
                     "type": "send_message",
-                    "message": content["message"],
-                    "username": content["username"],
                 })
             logger.debug(f"Received message: {content}")
 
@@ -60,16 +59,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
 
     async def send_message(self, event, reason="message"):
         try:
-            form = ChatMessageForm(event)
-            form.is_valid()  # TODO handle invalid form
-
+            form = self.clean_and_validate_input(event)
             content = {
+                **form.cleaned_data,
                 "type": reason,
-                "message": form.cleaned_data['message'],
-                "username": form.cleaned_data['username']
             }
             await self.send_json(content=content)
-
             logger.debug(f"Message sent: {event}")
 
             if self.store:
@@ -78,10 +73,16 @@ class ChatConsumer(AsyncJsonWebsocketConsumer, StoreConnector):
         except Exception as e:
             logger.error(f"Error sending message: {e}")
 
+    def clean_and_validate_input(self, data):
+        form = ChatMessageForm(data)
+        if not form.is_valid():
+            raise InvalidFormException()
+        return form
+
     async def save_message(self, channel_name, content):
         if not self.store:
             raise Exception("Error: no store provided")
-        
+
         return self.store.store_object(
             hashname=channel_name, obj=content
         )

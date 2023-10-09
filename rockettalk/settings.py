@@ -12,8 +12,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from sys import argv
 import dj_database_url
 import os
+import mimetypes
+
 
 load_dotenv()
 
@@ -25,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-4p%4wf%qg+6rqxf)c)wt$d4ku&_%zw=v^!fzsy8q*55pfa=y3m"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", False)
@@ -33,6 +36,20 @@ DEBUG = os.environ.get("DEBUG", False)
 ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.0", "localhost"]
 
 CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", None)]
+
+TESTING = len(argv) > 1 and argv[1] == 'test'
+    
+if TESTING:
+    DEBUG = True
+    CSRF_USE_SESSIONS = False
+
+if not DEBUG:
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_SSL_REDIRECT = True
+    WEBSOCKET_PROTOCOL = 'wss'
+else:
+    WEBSOCKET_PROTOCOL = 'ws'
 
 # Application definition
 
@@ -52,13 +69,16 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # "corsheaders.middleware.CorsMiddleware",
+
 
 ]
 
@@ -86,19 +106,26 @@ ASGI_APPLICATION = "rockettalk.asgi.application"
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ.get('REDIS_CACHE_URL', None),
+        "LOCATION": os.environ.get('REDIS_URL', None),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
 }
 
-# CACHES["redis"] = CACHES["default"]
+CACHES["redis"] = CACHES["default"]
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": os.environ.get('REDIS_CHANNEL_URL', None),
+        "CONFIG": {
+            "hosts": [
+                os.environ.get('REDIS_CHANNEL_URL',
+                               os.environ.get(
+                                   "HEROKU_REDIS_BLUE_URL", "localhost")
+                               )
+            ]
+        }
     }
 }
 
@@ -110,12 +137,12 @@ DATABASES = {
         "ENGINE": 'django.db.backends.postgresql',
         "NAME": os.environ.get("DATABASE_NAME"),
         "USER": os.environ.get("DATABASE_USER"),
-        "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
+        "PASSWORD": os.environ.get("DATABASE_PASS"),
         "HOST": os.environ.get("DATABASE_HOST"),
         "PORT": os.environ.get("DATABASE_PORT"),
-        "OPTIONS": {
-            "ssl_mode": os.environ.get("DATABASE_SSL_MODE", False)
-        }
+        # "OPTIONS": {
+        #     "ssl_mode": os.environ.get("DATABASE_SSL_MODE", False)
+        # }
     }
 }
 
@@ -125,6 +152,13 @@ if DATABASE_URL:
     # Overrides default database
     DATABASES['default'] = dj_database_url.parse(
         DATABASE_URL, conn_max_age=600, ssl_require=True)
+    
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 LOGGING = {
     'version': 1,
@@ -224,6 +258,8 @@ STATIC_ROOT = "static/"
 STATICFILE_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+mimetypes.add_type("text/css", ".css", True)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
