@@ -44,3 +44,10 @@ class RedisStore:
         except Exception as ex:
             logger.error(f"Unable to retrieve objects from cache: {ex}")
         return []
+    
+    def delete_objects(self, hashname) -> None:
+        try:
+            logger.info('Deleting objects from %s hash', str((hashname)))
+            self.redis.delete(hashname)
+        except Exception as ex:
+            logger.error(f"Unable to delete objects from cache: {ex}")
